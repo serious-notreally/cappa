@@ -19,4 +19,5 @@ parts/*
 commit.txt
 venv/
 media/*
-cappa/settings/local.py
+src/settings/local.py
+src/settings/prod.py
