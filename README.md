@@ -13,7 +13,7 @@ Starting to learn programming is now easier.
 
 ### For developers
 If you want to participate in the development of the project, contact [me](https://vk.com/zakirmalay) and together we will make the application better!
-See [installation guide](docs/installation) for quick start.
+See [installation guide](docs/installation.md) for quick start.
 
 ### Contacts
 
