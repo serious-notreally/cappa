@@ -29,10 +29,23 @@ class Task(models.Model):
         verbose_name_plural = "задачи"
         ordering = ('order_key',)
 
+    INT = 'int'
+    FLOAT = 'float'
+    STR = 'str'
+    OUTPUT_TYPES = (
+        (STR, 'строка'),
+        (INT, 'целое число'),
+        (FLOAT, 'вещественное число')
+    )
+
     order_key = models.PositiveIntegerField(verbose_name='порядок', default=0)
     show = models.BooleanField(verbose_name="отображать", default=False)
     last_modified = models.DateTimeField(verbose_name="дата последнего изменения", auto_now=True)
     title = models.CharField(verbose_name="заголовок", max_length=255)
+    output_type = models.CharField(
+        verbose_name='тип решения', max_length=255,
+        choices=OUTPUT_TYPES, default=STR
+    )
     author = models.ForeignKey(UserModel, verbose_name="автор", on_delete=models.SET_NULL, blank=True, null=True)
     content = HTMLField(verbose_name="текст задания", default="", blank=True, null=True)
     source = models.ForeignKey(Source, verbose_name="источник", on_delete=models.SET_NULL, null=True, blank=True)

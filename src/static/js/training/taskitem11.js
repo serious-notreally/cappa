@@ -129,7 +129,7 @@ var taskItemPage = function(e){
         tests : function(e){
             formControl.showLoader('Тестирование')
             formControl.disableBtns()
-            $.post(form.getAttribute('action'), formControl.serializeForm(operation='tests'), function(response){
+            $.post(form.getAttribute('action'), formControl.serializeForm(operation='check_tests'), function(response){
                 formControl.showMsg(response)
                 formControl.enableVersionsBtn()
                 table = document.querySelector('.js__form__tests-table')

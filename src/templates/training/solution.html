@@ -29,7 +29,7 @@
                     <td>{{ object.progress }} % (Пройдено тестов: {{ object.version_best.tests.num_success }} из {{ object.version_best.tests.num }})</td>
                 </tr>
             </table>
-            <div class="js__editor" data-lang="{{ object.taskitem.lang.provider }}">
+            <div class="js__editor" data-lang="{{ object.taskitem.lang.provider_name }}">
                 <div class="js__editor-ace">{{ object.version_best.content }}</div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                         </tr>
                     </table>
 
-                    <div class="js__editor" data-lang="{{ object.taskitem.lang.provider }}">
+                    <div class="js__editor" data-lang="{{ object.taskitem.lang.provider_name }}">
                         <div class="js__editor-ace">{{ version.content }}</div>
                     </div>
 

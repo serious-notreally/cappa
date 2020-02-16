@@ -28,22 +28,29 @@ class TaskItemForm(forms.Form):
 
         CHOICES = (
             ('debug', 'debug'),
-            ('tests', 'tests'),
+            ('check_tests', 'check_tests'),
             ('create_version', 'create_version'),
             ('save_last_changes', 'save_last_changes'),
         )
 
         @staticmethod
         def debug(data, taskitem, user):
-            result = taskitem.lang.debug(data['input'], data['content'])
+            result = taskitem.lang.provider.debug(
+                input=data['input'],
+                content=data['content']
+            )
             if result['error']:
                 return Response(202, 'Ошибка отладки', output=result['output'], error=result['error'])
             else:
                 return Response(200, 'Готово', output=result['output'])
 
         @staticmethod
-        def tests(data, taskitem, user):
-            tests_result = taskitem.lang.tests(data['content'], taskitem.task.tests)
+        def check_tests(data, taskitem, user):
+            tests_result = taskitem.lang.provider.check_tests(
+                content=data['content'],
+                tests=taskitem.task.tests,
+                output_type=taskitem.task.output_type
+            )
             if user.is_active:
                 solution, _ = Solution.objects.get_or_create(user=user, taskitem=taskitem)
                 solution.update(data['content'], tests_result)

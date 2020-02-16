@@ -27,7 +27,7 @@ class TaskItemView(View):
     def get(self, request, *args, **kwargs):
         taskitem = self.get_object(request,  *args, **kwargs)
         solution = None
-        form_initial = {'lang': taskitem.lang.provider}
+        form_initial = {'lang': taskitem.lang.provider_name}
         if request.user.is_active:
             solution = Solution.objects.filter(taskitem=taskitem, user=request.user).first()
             if solution:

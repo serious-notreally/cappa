@@ -75,7 +75,7 @@ def debug(input, content):
     }
 
 
-def tests(content, tests):
+def check_tests(content, tests):
     tmp = TmpFiles(content)
     tests_data = []
     tests_num = len(tests)
