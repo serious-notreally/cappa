@@ -35,6 +35,7 @@ def load_dump(dump_name: str = default_dump_name) -> Result:
     """ Загружает дамп в пустую базу, использвать для юнит-тестов """
 
     db = settings.DATABASES['default']
+    dump_name="/mnt/"+"c"+dump_name.replace("\\","/")[2:]
     command = f'export PGPASSWORD={db["PASSWORD"]};' \
               f'psql -h {db["HOST"]} -p {db["PORT"]} -U {db["USER"]} {db["NAME"]} < {dump_name}'
     proc = subprocess.Popen(

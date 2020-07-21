@@ -12,10 +12,10 @@ def create_db(db1: str, db2: str):                             #копирова
     db1_path = os.path.join(current_dir, "tests_db\\" + db1)     #путь к тестовой б.д.
     db2_path = os.path.join(current_dir, "users_db\\" + db2)     #путь к б.д. пользователя
     try:
-        os.remove(db2_path)
+        os.remove(db2_path)                      #удаление существующей копии, на случай если она есть
     except:
         pass
-    shutil.copy2(db1_path, db2_path)
+    shutil.copy2(db1_path, db2_path)         #создание копии файла (путь копирумого файла, путь куда он копируется)
 
 class Provider(BaseProvider):
     @classmethod
@@ -37,18 +37,22 @@ class Provider(BaseProvider):
         error=""
         output = ""
         try:
-            create_db(stdin,kwargs['session_key']+".db")
+            create_db(stdin,kwargs['session_key']+".db")                    #создание копии б.д.
             BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-            db_path = os.path.join(BASE_DIR, "users_db\\"+kwargs['session_key']+".db")
-            conn = sqlite3.connect(db_path)
+            db_path = os.path.join(BASE_DIR, "users_db",kwargs['session_key']+".db")   #путь к копии б.д.
+            conn = sqlite3.connect(db_path)                       #стандартное исполнение SQL кода через sqlite3
             c = conn.cursor()
             c.execute(content)
         except Exception as e:
-            error = str(e)
+            error = str(e)                                  #получение ошибкт, если она есть
         else:
             for res in c.fetchall():
-                output += str(res)+"\n"
-            c.close()
+                output += str(res)+"\n"                            #получение результата, если он есть
+            conn.close()
+        try:
+            os.remove(os.path.join(BASE_DIR, "users_db", kwargs['session_key'] + ".db"))     #удаление копии, чтобы её не хранить
+        except:
+            pass
         return {
             'output': output,
             'error': error
@@ -56,7 +60,7 @@ class Provider(BaseProvider):
 
     @classmethod
     def check_tests(cls, content: str, task: Task, **kwargs) -> dict:
-        compare_method_name = f'_compare_{task.output_type}'
+        compare_method_name = f'_compare_{task.output_type}'        #имя метода сравнения результатов
         compare_method = getattr(cls, compare_method_name)
         tests_data = []
         tests_num_success = 0
@@ -67,15 +71,20 @@ class Provider(BaseProvider):
             output = ""
             success = False
             try:
-                create_db("bd_"+str(ind)+".db", kwargs['session_key'] + ".db")      #все б.д. назвать bd_1, bd_2 и т.д.
+                #create_db("bd_"+str(ind)+".db", kwargs['session_key'] + ".db")#все б.д. назвать bd_1, bd_2 и т.д.
+                create_db("bd_"+str(ind)+".db", "kappa" + ".db") #для юнит тестов
                 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-                db_path = os.path.join(BASE_DIR, "users_db\\"+kwargs['session_key']+".db")  #путь к б.д. пользователя
+                #db_path = os.path.join(BASE_DIR, "users_db",kwargs['session_key']+".db")#путь к б.д. пользователя
+                db_path = os.path.join(BASE_DIR, "users_db", "kappa" + ".db") #для юнит тестов
                 conn = sqlite3.connect(db_path)                                     #стандартное выполнение запроса в sqlite3
                 c = conn.cursor()
                 c.execute(content)
                 conn.commit()
             except Exception as e:
                 error=str(e)
+                conn.close()
+                #os.remove(os.path.join(BASE_DIR, "users_db", kwargs['session_key'] + ".db"))
+                os.remove(os.path.join(BASE_DIR, "users_db", "kappa" + ".db"))#для юнит тестов
             else:
                 if "sqlselect" not in compare_method_name:        #не изм. б.д. запрос
                     for res in c.fetchall():
@@ -102,7 +111,11 @@ class Provider(BaseProvider):
                 "error": error,
                 "success": success
             })
-
+        try:
+            #os.remove(os.path.join(BASE_DIR, "users_db", kwargs['session_key'] + ".db"))
+            os.remove(os.path.join(BASE_DIR, "users_db", "kappa" + ".db"))#для юнит тестов
+        except:
+            pass
         tests_num = len(task.tests)
         return {
             'num': tests_num,
